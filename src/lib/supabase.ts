@@ -1,15 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+// Blank values (e.g. a GitHub secret that was not set) are treated as missing, so the app
+// still loads and shows a "Supabase is not configured" notice instead of a white page.
+const url = ((import.meta.env.VITE_SUPABASE_URL as string | undefined) ?? '').trim();
+const anonKey = ((import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ?? '').trim();
 
-export const supabaseConfigured = Boolean(url && anonKey);
+export const supabaseConfigured = /^https?:\/\//.test(url) && anonKey.length > 0;
 
-export const supabase = createClient(url ?? 'http://localhost:54321', anonKey ?? 'missing-anon-key', {
+export const supabase = createClient(supabaseConfigured ? url : 'http://localhost:54321', anonKey || 'missing-anon-key', {
   auth: { persistSession: true, autoRefreshToken: true, storageKey: 'hr-portal-auth' },
 });
 
-export const EMPLOYEE_EMAIL_DOMAIN = ((import.meta.env.VITE_EMPLOYEE_EMAIL_DOMAIN as string | undefined) ?? 'staff.yourcompany.com')
+export const EMPLOYEE_EMAIL_DOMAIN = ((import.meta.env.VITE_EMPLOYEE_EMAIL_DOMAIN as string | undefined) || 'staff.yourcompany.com')
   .trim()
   .toLowerCase();
 
