@@ -75,6 +75,16 @@ npm run dev                  # http://localhost:5173
 Any static host works. Build command `npm run build`, output `dist`, and set the three `VITE_*` environment variables.
 SPA routing is pre-configured for **Vercel** (`vercel.json`) and **Netlify** (`public/_redirects`).
 
+### GitHub Pages
+
+GitHub Pages cannot run the source code directly – it must serve the **built** `dist` folder. The workflow `.github/workflows/deploy-pages.yml` does this automatically:
+
+1. Repo **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. Repo **Settings → Secrets and variables → Actions → New repository secret**, add:
+   `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_EMPLOYEE_EMAIL_DOMAIN`.
+3. Push to `main` (or run the workflow manually from the **Actions** tab). The site is built with the correct sub-path (`/<repo-name>/`) and a `404.html` fallback so deep links work.
+4. In Supabase **Authentication → URL Configuration**, set the Site URL to your Pages URL.
+
 ---
 
 ## First-run checklist (admin)
