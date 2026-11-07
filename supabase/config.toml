@@ -1,0 +1,5 @@
+# Minimal Supabase CLI config. Run `supabase link --project-ref <ref>` before `supabase db push`.
+project_id = "hr-portal"
+
+[functions.admin-employees]
+verify_jwt = true
