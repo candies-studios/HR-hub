@@ -20,7 +20,7 @@ $$;
 -- ---------------------------------------------------------------------
 create table public.org_settings (
   id                  int primary key default 1 check (id = 1),
-  company_name        text not null default 'Your Company Pvt. Ltd.',
+  company_name        text not null default 'Candies Studios',
   company_address     text not null default '',
   reporting_time      time not null default '10:00',
   grace_minutes       int  not null default 0 check (grace_minutes between 0 and 240),
@@ -38,7 +38,7 @@ create sequence public.employee_code_seq start 1;
 
 create table public.employees (
   id                    uuid primary key default gen_random_uuid(),
-  employee_code         text not null unique check (employee_code ~ '^EMP[0-9]{3,}$'),
+  employee_code         text not null unique check (employee_code ~ '^CAN[0-9]{3,}$'),
   full_name             text not null check (length(trim(full_name)) > 1),
   date_of_birth         date not null,
   email                 text,

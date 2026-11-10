@@ -24,14 +24,14 @@ begin
 end $$;
 
 -- ---------------------------------------------------------------------
--- Employee code generator (EMP001, EMP002 ...). Service role only.
+-- Employee code generator (CAN001, CAN002 ...). Service role only.
 -- ---------------------------------------------------------------------
 create or replace function public.generate_employee_code()
 returns text language plpgsql security definer set search_path = public as $$
 declare v_code text;
 begin
   loop
-    v_code := 'EMP' || lpad(nextval('public.employee_code_seq')::text, 3, '0');
+    v_code := 'CAN' || lpad(nextval('public.employee_code_seq')::text, 3, '0');
     exit when not exists (select 1 from public.employees where employee_code = v_code);
   end loop;
   return v_code;

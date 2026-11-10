@@ -12,7 +12,7 @@ A production-ready HR portal for Indian organisations: employee profiles, automa
 |---|---|
 | **Auth** | Employees log in with **Employee ID + DOB (DDMMYYYY)** on first login and are **forced to change the password**. Admins have a separate e-mail login. Passwords live only in Supabase Auth (bcrypt). |
 | **Admin dashboard** | Total / present / absent / on-leave / late / half-day counts for today, month-to-date payroll, penalties; charts for attendance trend, present vs absent, half-days & late arrivals, monthly salary expenditure; quick actions. |
-| **Employees** | Auto IDs (`EMP001`, `EMP002`…), full profile incl. blood group, alternate contact & relation, optional photo; directory with search, filters, sorting, CSV export; edit, revise salary/designation, reset password, deactivate (login is blocked). |
+| **Employees** | Auto IDs (`CAN001`, `CAN002`…), full profile incl. blood group, alternate contact & relation, optional photo; directory with search, filters, sorting, CSV export; edit, revise salary/designation, reset password, deactivate (login is blocked). |
 | **Attendance** | Logging in records the sign-in (server time, IST); signing out records sign-out and duration. One record per employee per day; multiple logins only add sessions. **≤ 10:00 → Present, later → Half Day** (configurable time / grace). Admin can approve a late arrival as an **exception**, mark/edit/delete attendance (mandatory reason), bulk-mark, fix forgotten logouts. Full modification history. Views by date, monthly register, by employee (colour calendar), yearly summary. |
 | **Leave** | Apply with dates, type, reason, auto-counted days (weekly offs & holidays excluded), optional attachment. Pending → Approved / Rejected / Cancelled. Per-type paid/unpaid, annual quota and advance-notice rules enforced in the database. |
 | **Holidays & policy** | Holiday calendar per year with categories (Festival, National, State, Optional), paid/unpaid, all or selected employees; copy from previous year; **reference list of Indian holidays that is never applied automatically** — admin reviews and imports. Leave policy + calendar visible to employees. |
@@ -49,7 +49,7 @@ supabase secrets set EMPLOYEE_EMAIL_DOMAIN=staff.yourcompany.com
 supabase functions deploy admin-employees
 ```
 
-`EMPLOYEE_EMAIL_DOMAIN` builds a hidden login e-mail for each employee (`EMP001` → `emp001@staff.yourcompany.com`). No mail is ever sent to it; use a sub-domain you own. It **must match** `VITE_EMPLOYEE_EMAIL_DOMAIN` in the frontend.
+`EMPLOYEE_EMAIL_DOMAIN` builds a hidden login e-mail for each employee (`CAN001` → `can001@staff.yourcompany.com`). No mail is ever sent to it; use a sub-domain you own. It **must match** `VITE_EMPLOYEE_EMAIL_DOMAIN` in the frontend.
 
 ## 4. Create the first admin
 

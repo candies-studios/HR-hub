@@ -4,17 +4,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Alert, Button, Field, Input } from '../components/ui';
 import { useAuth } from '../contexts/AuthContext';
 import { supabaseConfigured } from '../lib/supabase';
+import { asset } from '../lib/format';
 
 function Shell({ children, admin }: { children: React.ReactNode; admin?: boolean }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-brand-950 px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-lg font-bold text-white shadow-lg">
-            {admin ? <ShieldCheck className="h-6 w-6" /> : 'HR'}
+          <div className="mx-auto mb-5 inline-flex rounded-2xl bg-white px-6 py-4 shadow-lg">
+            <img src={asset('logo.png')} alt="Candies Studios" className="h-9 w-auto" />
           </div>
-          <h1 className="text-xl font-semibold text-white">{admin ? 'Administrator Login' : 'Employee Login'}</h1>
-          <p className="mt-1 text-sm text-slate-400">HR, Attendance & Payroll Portal</p>
+          <h1 className="flex items-center justify-center gap-2 text-xl font-semibold text-white">
+            {admin && <ShieldCheck className="h-5 w-5 text-brand-300" />}{admin ? 'Administrator Login' : 'Employee Login'}
+          </h1>
+          <p className="mt-1 text-sm text-slate-400">Candies Studios · HR, Attendance & Payroll Portal</p>
         </div>
         <div className="rounded-2xl bg-white p-6 shadow-2xl">
           {!supabaseConfigured && (
@@ -67,7 +70,7 @@ export function EmployeeLogin() {
         <Field label="Employee ID">
           <div className="relative">
             <UserRound className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="EMP001" autoComplete="username" required className="pl-9 uppercase" autoFocus />
+            <Input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="CAN001" autoComplete="username" required className="pl-9 uppercase" autoFocus />
           </div>
         </Field>
         <Field label="Password" hint="First login: your date of birth as DDMMYYYY">

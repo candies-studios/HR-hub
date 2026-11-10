@@ -123,7 +123,7 @@ export default function EmployeeForm() {
       <Link to={isEdit ? `/admin/employees/${id}` : '/admin/employees'} className="mb-3 inline-flex items-center gap-1 text-sm text-slate-500 hover:text-slate-800">
         <ArrowLeft className="h-4 w-4" /> Back
       </Link>
-      <PageHeader title={isEdit ? `Edit ${existing?.employee_code ?? ''}` : 'Add Employee'} subtitle={isEdit ? 'Salary changes are made from the employee profile (Revise salary) so history is preserved.' : 'An Employee ID (EMPxxx) and login are created automatically.'} />
+      <PageHeader title={isEdit ? `Edit ${existing?.employee_code ?? ''}` : 'Add Employee'} subtitle={isEdit ? 'Salary changes are made from the employee profile (Revise salary) so history is preserved.' : 'An Employee ID (CAN001, CAN002 …) and login are created automatically.'} />
       <form onSubmit={submit} className="space-y-6">
         <Card title="Personal information">
           <div className="mb-5 flex items-center gap-4">

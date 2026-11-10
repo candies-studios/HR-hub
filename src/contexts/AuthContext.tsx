@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInEmployee = useCallback(async (code: string, password: string) => {
     const normalized = code.trim().toUpperCase();
-    if (!/^EMP\d{3,}$/.test(normalized)) throw new Error('Enter a valid Employee ID, e.g. EMP001');
+    if (!/^CAN\d{3,}$/.test(normalized)) throw new Error('Enter a valid Employee ID, e.g. CAN001');
     const { data, error } = await supabase.auth.signInWithPassword({ email: employeeLoginEmail(normalized), password });
     if (error) {
       if (/banned/i.test(error.message)) throw new Error('Your account is inactive. Please contact HR.');

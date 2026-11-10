@@ -47,5 +47,8 @@ export function amountInWords(amount: number): string {
   return `${negative ? 'Minus ' : ''}${out} Only`;
 }
 
+/** URL of a file in /public that also works when hosted in a sub-folder (GitHub Pages). */
+export const asset = (file: string) => `${import.meta.env.BASE_URL}${file}`;
+
 export const initials = (name: string) =>
   name.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0]!.toUpperCase()).join('');

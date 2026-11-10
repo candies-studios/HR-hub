@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { formatDate, formatDateTime, monthLabel } from './dates';
-import { amountInWords, days as fmtDays, moneyPlain } from './format';
+import { amountInWords, asset, days as fmtDays, moneyPlain } from './format';
 import { PENALTY_CATEGORIES, type Employee, type OrgSettings } from './types';
 import type { PayrollResult } from './salary';
 
@@ -9,6 +9,19 @@ type DocWithTable = jsPDF & { lastAutoTable?: { finalY: number } };
 const finalY = (doc: jsPDF) => (doc as DocWithTable).lastAutoTable?.finalY ?? 40;
 
 const BRAND: [number, number, number] = [31, 69, 235];
+
+// Company logo for PDFs – loaded once in the background when this module is first used.
+let logo: { data: string; ratio: number } | null = null;
+if (typeof window !== 'undefined') {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth; c.height = img.naturalHeight;
+    c.getContext('2d')?.drawImage(img, 0, 0);
+    logo = { data: c.toDataURL('image/png'), ratio: img.naturalHeight / img.naturalWidth };
+  };
+  img.src = asset('logo.png');
+}
 
 export interface SlipInput {
   employee: Employee;
@@ -21,23 +34,36 @@ function drawSlip(doc: jsPDF, { employee, result: r, settings, finalizedAt }: Sl
   const W = doc.internal.pageSize.getWidth();
   const M = 14;
 
-  // header band
-  doc.setFillColor(...BRAND);
-  doc.rect(0, 0, W, 30, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text(settings.company_name || 'Company', M, 13);
+  // header: logo + address on the left, title on the right, brand rule underneath
+  doc.setTextColor(30, 41, 59);
+  let textY = 14;
+  if (logo) {
+    const w = 62;
+    doc.addImage(logo.data, 'PNG', M, 9, w, w * logo.ratio);
+    textY = 9 + w * logo.ratio + 5;
+  } else {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.text(settings.company_name || 'Company', M, 15);
+    textY = 21;
+  }
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  if (settings.company_address) doc.text(doc.splitTextToSize(settings.company_address, W - 2 * M - 60), M, 19);
+  doc.setFontSize(8.5);
+  doc.setTextColor(100, 116, 139);
+  const addr = [logo ? settings.company_name : '', settings.company_address].filter(Boolean).join(' · ');
+  if (addr) doc.text(doc.splitTextToSize(addr, W - 2 * M - 60), M, textY);
+  doc.setTextColor(...BRAND);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
-  doc.text('SALARY SLIP', W - M, 13, { align: 'right' });
+  doc.setFontSize(13);
+  doc.text('SALARY SLIP', W - M, 14, { align: 'right' });
+  doc.setTextColor(30, 41, 59);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.text(monthLabel(r.year, r.month), W - M, 19, { align: 'right' });
-  doc.setTextColor(30, 41, 59);
+  doc.text(monthLabel(r.year, r.month), W - M, 20, { align: 'right' });
+  doc.setDrawColor(...BRAND);
+  doc.setLineWidth(0.8);
+  doc.line(M, 29, W - M, 29);
+  doc.setLineWidth(0.2);
 
   const kv = { theme: 'grid' as const, styles: { fontSize: 9, cellPadding: 2.2, lineColor: [226, 232, 240] as [number, number, number] } };
 
@@ -132,6 +158,7 @@ export function salarySlipPDF(slips: SlipInput[], filename: string) {
 
 export function tablePDF(opts: { title: string; subtitle?: string; head: string[]; body: (string | number)[][]; filename: string; landscape?: boolean }) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: opts.landscape ? 'landscape' : 'portrait' });
+  if (logo) doc.addImage(logo.data, 'PNG', doc.internal.pageSize.getWidth() - 14 - 40, 9, 40, 40 * logo.ratio);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.text(opts.title, 14, 15);

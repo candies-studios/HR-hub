@@ -5,6 +5,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Avatar } from '../components/ui';
 import { useToast } from '../components/Toast';
+import { asset } from '../lib/format';
 
 export interface NavItem { to: string; label: string; icon: LucideIcon; end?: boolean }
 
@@ -27,9 +28,9 @@ export function AppShell({ nav, title, userLabel, userSub, banner }: {
   const sidebar = (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-3 px-5 py-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">HR</div>
+        <img src={asset('logo-mark.png')} alt="" className="h-9 w-9 shrink-0 rounded-full bg-white" />
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-white">{settings?.company_name ?? 'HR Portal'}</p>
+          <p className="truncate text-sm font-semibold text-white">{settings?.company_name ?? 'Candies Studios'}</p>
           <p className="text-xs text-slate-400">{title}</p>
         </div>
       </div>
@@ -85,7 +86,8 @@ export function AppShell({ nav, title, userLabel, userSub, banner }: {
       <div className="lg:pl-64">
         <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur lg:hidden">
           <button onClick={() => setOpen(true)} className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100" aria-label="Open menu"><Menu className="h-5 w-5" /></button>
-          <p className="text-sm font-semibold">{settings?.company_name ?? 'HR Portal'}</p>
+          <img src={asset('logo-mark.png')} alt="" className="h-7 w-7 rounded-full" />
+          <p className="text-sm font-semibold">{settings?.company_name ?? 'Candies Studios'}</p>
         </header>
         {banner}
         <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
