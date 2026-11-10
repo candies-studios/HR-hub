@@ -1,6 +1,7 @@
 import { MonthAttendance } from '../../components/MonthAttendance';
 import { PageHeader } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
+import { formatClock, officeHours } from '../../lib/dates';
 
 export default function MyAttendance() {
   const { employee, settings } = useAuth();
@@ -9,7 +10,7 @@ export default function MyAttendance() {
     <>
       <PageHeader
         title="My Attendance"
-        subtitle={`Sign in at or before ${settings?.reporting_time.slice(0, 5) ?? '10:00'} AM IST for a full day. Later sign-ins are marked half day unless HR approves an exception. Contact HR if a record needs correction.`}
+        subtitle={`Office hours ${officeHours(settings)}. Sign in at or before ${formatClock(settings?.reporting_time ?? '09:30')} for a full day; later sign-ins are marked half day unless HR approves an exception. If you forget to log out, ${formatClock(settings?.office_end_time ?? '18:30')} is recorded. Contact HR if a record needs correction.`}
       />
       <MonthAttendance employee={employee} />
     </>

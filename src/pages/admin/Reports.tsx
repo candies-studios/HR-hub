@@ -57,7 +57,7 @@ export default function ReportsPage() {
           title: `Attendance log ${formatDate(from)} – ${formatDate(to)}`,
           head: ['Date', 'Employee ID', 'Name', 'Status', 'Sign in', 'Sign out', 'Hours', 'Late (min)', 'Exception', 'Source', 'Remarks'],
           rows: att.sort((a, b) => a.work_date.localeCompare(b.work_date) || (m.get(a.employee_id)?.employee_code ?? '').localeCompare(m.get(b.employee_id)?.employee_code ?? ''))
-            .map((a) => [a.work_date, m.get(a.employee_id)?.employee_code ?? '', m.get(a.employee_id)?.full_name ?? '', a.status.replace('_', ' '), formatTime(a.sign_in_at), formatTime(a.sign_out_at),
+            .map((a) => [a.work_date, m.get(a.employee_id)?.employee_code ?? '', m.get(a.employee_id)?.full_name ?? '', a.status.replace('_', ' '), formatTime(a.sign_in_at), formatTime(a.sign_out_at) + (a.auto_signed_out ? ' (auto)' : ''),
               (a.total_minutes / 60).toFixed(2), a.is_late ? a.late_minutes : '', a.late_exception ? 'Yes' : '', a.source, a.remarks ?? '']),
         };
       }

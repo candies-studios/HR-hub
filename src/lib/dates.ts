@@ -71,6 +71,17 @@ export const toISTTimeInput = (ts: string | null | undefined) => (ts ? hmFmt.for
 /** IST date + 'HH:MM' -> ISO string with +05:30 offset */
 export const istToISO = (date: string, time: string) => (time ? `${date}T${time.length === 5 ? time + ':00' : time}+05:30` : null);
 
+/** '18:30:00' -> '6:30 PM' */
+export const formatClock = (t: string | null | undefined) => {
+  if (!t) return '—';
+  const [h, m] = t.split(':').map(Number);
+  return `${h % 12 || 12}:${pad(m)} ${h < 12 ? 'AM' : 'PM'}`;
+};
+
+/** 'Office hours 9:30 AM – 6:30 PM IST' */
+export const officeHours = (s: { reporting_time: string; office_end_time?: string } | null | undefined) =>
+  `${formatClock(s?.reporting_time ?? '09:30')} – ${formatClock(s?.office_end_time ?? '18:30')} IST`;
+
 export const minutesToHM = (mins: number | null | undefined) => {
   if (!mins || mins <= 0) return '—';
   const h = Math.floor(mins / 60);

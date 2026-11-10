@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Alert, Badge, Card, EmptyState, Loading, PageHeader, Select, Table, Td, Th } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { fetchHolidays, fetchLeaveTypes } from '../../lib/api';
-import { currentYearMonth, dayOfWeek, formatDate, todayIST, WEEKDAYS } from '../../lib/dates';
+import { currentYearMonth, dayOfWeek, formatClock, formatDate, todayIST, WEEKDAYS } from '../../lib/dates';
 import { useData } from '../../lib/hooks';
 import { holidaysFor } from '../../lib/salary';
 import { HOLIDAY_CATEGORIES } from '../../lib/types';
@@ -24,7 +24,8 @@ export default function Policy() {
         <div className="space-y-6">
           <Card title="Attendance & salary rules">
             <ul className="list-disc space-y-1.5 pl-5 text-sm text-slate-700">
-              <li>Official reporting time is <b>{settings?.reporting_time.slice(0, 5)} AM IST</b>{settings?.grace_minutes ? ` (grace period ${settings.grace_minutes} min)` : ''}. Logging in to this portal records your sign-in; signing out records your sign-out.</li>
+              <li>Office hours: login by <b>{formatClock(settings?.reporting_time)}</b>{settings?.grace_minutes ? ` (grace period ${settings.grace_minutes} min)` : ''}, logout at <b>{formatClock(settings?.office_end_time ?? '18:30')}</b> IST. Logging in to this portal records your sign-in; signing out records your sign-out.</li>
+              <li>If you forget to log out, your sign-out is recorded automatically as {formatClock(settings?.office_end_time ?? '18:30')}.</li>
               <li>Sign-in at or before the reporting time = <b>Present (full day)</b>.{settings?.late_marks_half_day && <> Sign-in after it = <b>Half day</b> (half-day salary deduction), unless HR approves the late arrival as an exception.</>}</li>
               <li>Weekly off: <b>{offs}</b> – {settings?.weekly_off_paid ? 'paid' : 'unpaid'}.</li>
               <li>Daily salary = monthly salary ÷ number of calendar days in that month.</li>

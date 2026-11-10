@@ -5,12 +5,13 @@ import { KIND_STYLE, Legend } from '../../components/AttendanceCalendar';
 import { AttendanceEditModal, type AttendanceTarget } from '../../components/AttendanceEditModal';
 import { MonthAttendance } from '../../components/MonthAttendance';
 import { useToast } from '../../components/Toast';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   Alert, Badge, Button, Card, Checkbox, EmptyState, Field, Input, Loading, Modal, MonthPicker, PageHeader, Select, Table, Tabs, Td, Textarea, Th,
 } from '../../components/ui';
 import { computeAll, computePayroll, employedInMonth, fetchEmployees, loadMonthData, loadRangeData, withMonth } from '../../lib/api';
 import {
-  addDays, currentYearMonth, dayOfWeek, formatDate, formatDateTime, formatTime, minutesToHM, MONTHS, parseYMD, todayIST, WEEKDAYS,
+  addDays, currentYearMonth, dayOfWeek, formatDate, formatDateTime, formatTime, minutesToHM, MONTHS, officeHours, parseYMD, todayIST, WEEKDAYS,
 } from '../../lib/dates';
 import { downloadCSV } from '../../lib/export';
 import { days as fmtDays } from '../../lib/format';
@@ -29,10 +30,11 @@ const kindTone = (k: DayKind) =>
   : k === 'paid_leave' || k === 'unpaid_leave' ? 'blue' as const : 'grey' as const;
 
 export default function AttendancePage() {
+  const { settings } = useAuth();
   const [tab, setTab] = useState<Tab>('daily');
   return (
     <>
-      <PageHeader title="Attendance" subtitle="Sign-ins are captured automatically from the employee portal. Reporting time 10:00 AM IST; later sign-ins become half days unless an exception is approved." />
+      <PageHeader title="Attendance" subtitle={`Sign-ins are captured automatically from the employee portal. Office hours ${officeHours(settings)}; later sign-ins become half days unless an exception is approved. Forgotten logouts are closed automatically at the office end time.`} />
       <Tabs<Tab> value={tab} onChange={setTab} tabs={[
         { value: 'daily', label: 'By date' }, { value: 'monthly', label: 'Monthly register' },
         { value: 'employee', label: 'By employee' }, { value: 'yearly', label: 'Yearly summary' }, { value: 'history', label: 'Modification history' },
@@ -145,7 +147,7 @@ function DailyView() {
                     {a?.source === 'admin' && <div className="mt-0.5 text-xs text-slate-400">marked by admin</div>}
                   </Td>
                   <Td>{formatTime(a?.sign_in_at)}</Td>
-                  <Td>{a?.sign_out_at ? formatTime(a.sign_out_at) : a?.sign_in_at ? <span className="text-xs text-orange-600">open</span> : '—'}</Td>
+                  <Td>{a?.sign_out_at ? <>{formatTime(a.sign_out_at)}{a.auto_signed_out && <Badge className="ml-1">auto</Badge>}</> : a?.sign_in_at ? <span className="text-xs text-orange-600">open</span> : '—'}</Td>
                   <Td>{minutesToHM(a?.total_minutes)}</Td>
                   <Td>{a?.is_late ? <span className="text-orange-700">{a.late_minutes} min{a.late_exception && <Badge tone="green" className="ml-1">excused</Badge>}</span> : '—'}</Td>
                   <Td className="text-right">
@@ -173,8 +175,9 @@ function BulkModal({ status, date, employees, onClose, onDone }: {
   status: 'present' | 'absent'; date: string; employees: { emp: Employee; day: DayResult }[]; onClose: () => void; onDone: () => void;
 }) {
   const toast = useToast();
-  const [inT, setInT] = useState('10:00');
-  const [outT, setOutT] = useState('18:00');
+  const { settings } = useAuth();
+  const [inT, setInT] = useState((settings?.reporting_time ?? '09:30').slice(0, 5));
+  const [outT, setOutT] = useState((settings?.office_end_time ?? '18:30').slice(0, 5));
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);

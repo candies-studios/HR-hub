@@ -12,7 +12,8 @@ export interface OrgSettings {
   id: number;
   company_name: string;
   company_address: string;
-  reporting_time: string; // HH:MM:SS
+  reporting_time: string; // HH:MM:SS – sign-in at or before = full day
+  office_end_time: string; // HH:MM:SS – official logout time
   grace_minutes: number;
   late_marks_half_day: boolean;
   weekly_off_days: number[];
@@ -68,6 +69,7 @@ export interface Attendance {
   late_exception_reason: string | null;
   late_exception_at: string | null;
   source: 'portal' | 'admin';
+  auto_signed_out: boolean;
   remarks: string | null;
   created_at: string;
   updated_at: string;
@@ -80,7 +82,7 @@ export interface AttendanceSession {
   login_at: string;
   logout_at: string | null;
   user_agent: string | null;
-  closed_by: 'employee' | 'admin' | null;
+  closed_by: 'employee' | 'admin' | 'system' | null;
 }
 
 export interface AttendanceHistory {

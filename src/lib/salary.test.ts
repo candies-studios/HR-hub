@@ -9,7 +9,7 @@ const rev = (monthly: number, effective: string): SalaryRevision => ({
 const att = (date: string, status: Attendance['status'], extra: Partial<Attendance> = {}): Attendance => ({
   id: date, employee_id: 'e1', work_date: date, status, sign_in_at: null, sign_out_at: null, total_minutes: 0,
   is_late: false, late_minutes: 0, late_exception: false, late_exception_reason: null, late_exception_at: null,
-  source: 'portal', remarks: null, created_at: '', updated_at: '', ...extra,
+  source: 'portal', auto_signed_out: false, remarks: null, created_at: '', updated_at: '', ...extra,
 });
 const CL: LeaveType = { id: 'cl', code: 'CL', name: 'Casual', is_paid: true, annual_quota: 12, min_notice_days: 1, description: null, is_active: true, sort_order: 1 };
 const LWP: LeaveType = { ...CL, id: 'lwp', code: 'LWP', name: 'LWP', is_paid: false, annual_quota: null };

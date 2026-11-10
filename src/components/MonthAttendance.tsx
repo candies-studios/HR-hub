@@ -75,7 +75,7 @@ export function MonthAttendance({ employee, editable = false }: { employee: Empl
                   <Td>{formatDate(d.date)}</Td>
                   <Td><Badge tone={d.kind === 'present' || d.kind === 'late_excused' ? 'green' : d.kind === 'absent' ? 'red' : d.kind === 'late_half_day' ? 'orange' : 'yellow'}>{DAY_KIND_LABEL[d.kind]}</Badge></Td>
                   <Td>{formatTime(d.attendance?.sign_in_at)}</Td>
-                  <Td>{d.attendance?.sign_out_at ? formatTime(d.attendance.sign_out_at) : d.attendance?.sign_in_at ? <span className="text-xs text-orange-600">not signed out</span> : '—'}</Td>
+                  <Td>{d.attendance?.sign_out_at ? <>{formatTime(d.attendance.sign_out_at)}{d.attendance.auto_signed_out && <Badge className="ml-1">auto</Badge>}</> : d.attendance?.sign_in_at ? <span className="text-xs text-orange-600">not signed out</span> : '—'}</Td>
                   <Td>{minutesToHM(d.attendance?.total_minutes)}</Td>
                   <Td className="max-w-xs truncate text-xs text-slate-500">{[d.note, d.attendance?.remarks].filter(Boolean).join(' · ')}</Td>
                 </tr>

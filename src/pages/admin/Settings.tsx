@@ -24,7 +24,7 @@ export default function SettingsPage() {
     setBusy(true); setErr(null);
     try {
       await must(supabase.from('org_settings').update({
-        company_name: f.company_name.trim(), company_address: f.company_address.trim(), reporting_time: f.reporting_time,
+        company_name: f.company_name.trim(), company_address: f.company_address.trim(), reporting_time: f.reporting_time, office_end_time: f.office_end_time,
         grace_minutes: Number(f.grace_minutes) || 0, late_marks_half_day: f.late_marks_half_day,
         weekly_off_days: f.weekly_off_days, weekly_off_paid: f.weekly_off_paid,
       }).eq('id', 1));
@@ -46,7 +46,8 @@ export default function SettingsPage() {
         </Card>
         <Card title="Attendance rules (IST)">
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Official reporting time" hint="Sign-in at or before this time = full day"><Input type="time" value={f.reporting_time.slice(0, 5)} onChange={(e) => setF({ ...f, reporting_time: e.target.value })} /></Field>
+            <Field label="Login time (reporting time)" hint="Sign-in at or before this time = full day"><Input type="time" value={f.reporting_time.slice(0, 5)} onChange={(e) => setF({ ...f, reporting_time: e.target.value })} /></Field>
+            <Field label="Logout time (office end time)" hint="Shown to employees. If someone forgets to log out, this time is recorded as their sign-out."><Input type="time" value={(f.office_end_time ?? '18:30').slice(0, 5)} onChange={(e) => setF({ ...f, office_end_time: e.target.value })} /></Field>
             <Field label="Grace period (minutes)" hint="0 = strictly at reporting time"><Input type="number" min="0" max="240" value={f.grace_minutes} onChange={(e) => setF({ ...f, grace_minutes: Number(e.target.value) })} /></Field>
             <div className="sm:col-span-2"><Checkbox checked={f.late_marks_half_day} onChange={(v) => setF({ ...f, late_marks_half_day: v })} label="Late sign-in is automatically marked as Half Day (half-day salary deduction)" /></div>
           </div>

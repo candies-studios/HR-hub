@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Alert, Badge, Button, Card, EmptyState, Loading, PageHeader, StatCard, leaveStatusTone } from '../../components/ui';
 import { useAuth } from '../../contexts/AuthContext';
 import { computePayroll, fetchLeaveTypes, loadMonthData, snapshotOf } from '../../lib/api';
-import { currentYearMonth, formatDate, formatTime, minutesToHM, monthLabel, todayIST, WEEKDAYS, dayOfWeek } from '../../lib/dates';
+import { currentYearMonth, formatDate, formatTime, minutesToHM, monthLabel, officeHours, todayIST, WEEKDAYS, dayOfWeek } from '../../lib/dates';
 import { days as fmtDays, money } from '../../lib/format';
 import { useData } from '../../lib/hooks';
 import { salarySlipPDF } from '../../lib/pdf';
@@ -41,7 +41,7 @@ export default function EmployeeDashboard() {
 
   return (
     <>
-      <PageHeader title={`Hello, ${employee.full_name.split(' ')[0]} 👋`} subtitle={`${WEEKDAYS[dayOfWeek(today)]}, ${formatDate(today)} · Reporting time ${settings?.reporting_time.slice(0, 5) ?? '10:00'} AM IST`} />
+      <PageHeader title={`Hello, ${employee.full_name.split(' ')[0]} 👋`} subtitle={`${WEEKDAYS[dayOfWeek(today)]}, ${formatDate(today)} · Office hours ${officeHours(settings)}`} />
       {loading ? <Loading /> : error ? <Alert tone="error">{error}</Alert> : data && (
         <>
           <Card className="mb-6">
@@ -60,7 +60,7 @@ export default function EmployeeDashboard() {
                         : <Badge tone="red">Absent</Badge>}
                     </p>
                     <p className="mt-0.5 text-sm text-slate-500">
-                      {att.sign_out_at ? `Last sign-out ${formatTime(att.sign_out_at)} · ${att.total_minutes > 0 ? `${minutesToHM(att.total_minutes)} worked` : 'under a minute worked'}` : 'Your sign-out time is recorded when you click “Sign out”.'}
+                      {att.sign_out_at ? `Last sign-out ${formatTime(att.sign_out_at)}${att.auto_signed_out ? ' (recorded automatically – you did not log out)' : ''} · ${att.total_minutes > 0 ? `${minutesToHM(att.total_minutes)} worked` : 'under a minute worked'}` : `Your sign-out time is recorded when you click “Sign out”. Office closes at ${officeHours(settings).split(' – ')[1]}.`}
                     </p>
                     {att.is_late && !att.late_exception && <p className="mt-1 text-xs text-orange-700">Late arrivals are counted as a half day. Your manager can approve an exception.</p>}
                   </>

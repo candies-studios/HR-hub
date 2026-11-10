@@ -1,9 +1,10 @@
 import { Eye, EyeOff, KeyRound, ShieldCheck, UserRound } from 'lucide-react';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Alert, Button, Field, Input } from '../components/ui';
 import { useAuth } from '../contexts/AuthContext';
-import { supabaseConfigured } from '../lib/supabase';
+import { supabase, supabaseConfigured } from '../lib/supabase';
+import { officeHours } from '../lib/dates';
 import { asset } from '../lib/format';
 
 function Shell({ children, admin }: { children: React.ReactNode; admin?: boolean }) {
@@ -49,6 +50,11 @@ export function EmployeeLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [hours, setHours] = useState(officeHours(null));
+  useEffect(() => {
+    supabase.from('org_settings').select('reporting_time, office_end_time').eq('id', 1).maybeSingle()
+      .then(({ data }) => data && setHours(officeHours(data)));
+  }, []);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -78,7 +84,7 @@ export function EmployeeLogin() {
         </Field>
         {error && <Alert tone="error">{error}</Alert>}
         <Button type="submit" loading={busy} className="w-full" icon={<KeyRound className="h-4 w-4" />}>Sign in</Button>
-        <p className="text-center text-xs text-slate-500">Signing in records your attendance for today (reporting time 10:00 AM IST).</p>
+        <p className="text-center text-xs text-slate-500">Signing in records your attendance for today. Office hours {hours}.</p>
       </form>
       <div className="mt-5 border-t border-slate-100 pt-4 text-center">
         <Link to="/admin/login" className="text-xs font-medium text-brand-600 hover:underline">Administrator login →</Link>

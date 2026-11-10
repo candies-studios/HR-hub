@@ -74,6 +74,8 @@ export interface MonthData {
 
 /** Everything needed to compute payroll for any month inside [from, to]. RLS limits an employee to their own rows. */
 export async function loadRangeData(from: string, to: string, employeeId?: string): Promise<MonthData> {
+  // close login sessions that were left open on earlier days (forgot to log out → office end time)
+  await supabase.rpc('close_stale_sessions').then(() => undefined, () => undefined);
   const y1 = Number(from.slice(0, 4));
   const y2 = Number(to.slice(0, 4));
   const [settings, employees, revisions, attendance, leaves, leaveTypes, holidays, penalties, adjustments, payroll] = await Promise.all([

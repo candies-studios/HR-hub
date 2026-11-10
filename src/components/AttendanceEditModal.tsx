@@ -56,7 +56,7 @@ export function AttendanceEditModal({ target, onClose, onSaved }: { target: Atte
   }, [target]);
 
   if (!target) return null;
-  const cutoff = settings ? addMinutes(HHMM(settings.reporting_time), settings.grace_minutes) : '10:00';
+  const cutoff = settings ? addMinutes(HHMM(settings.reporting_time), settings.grace_minutes) : '09:30';
   const isLate = Boolean(inT) && inT > cutoff;
 
   const onInChange = (v: string) => {
@@ -157,6 +157,7 @@ export function AttendanceEditModal({ target, onClose, onSaved }: { target: Atte
               <li key={s.id} className="flex flex-wrap gap-2 text-slate-600">
                 <span>In {formatTime(s.login_at)}</span>→<span>{s.logout_at ? `Out ${formatTime(s.logout_at)}` : <Badge tone="orange">no logout</Badge>}</span>
                 {s.closed_by === 'admin' && <Badge>closed by admin</Badge>}
+                {s.closed_by === 'system' && <Badge tone="orange">auto-closed at office end time</Badge>}
               </li>
             ))}
           </ul>
